@@ -20,7 +20,6 @@ public class SeckillDaoTest {
     @Resource
     private SeckillDao seckillDao;
 
-
     @Test
     public void queryById() throws Exception {
         long seckillId=1000;
