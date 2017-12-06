@@ -13,16 +13,22 @@ import com.huawei.exception.SeckillException;
 import com.huawei.service.SeckillService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 import java.util.Date;
 import java.util.List;
 
+@Service
 public class SeckillServiceImpl implements SeckillService {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
     private SuccessKilledDao successKilledDao;
+    @Autowired
     private SeckillDao seckillDao;
 
     //盐值，混淆
@@ -61,13 +67,14 @@ public class SeckillServiceImpl implements SeckillService {
         return md5;
     }
 
-    public SeckillExecution executeSeckill(long seckillId, long userPhonne, String md5) throws SeckillException, RepeatKillException, SeckillCloseException {
+    @Transactional
+    public SeckillExecution executeSeckill(long seckillId, long userPhonne, String md5)
+            throws SeckillException, RepeatKillException, SeckillCloseException {
         if (md5 == null || md5.equals(getMD5(seckillId))) {
             throw new SeckillException("seckill data rewrite");
         }
         //执行秒杀：减库存 + 记录购买行为
         Date nowTime = new Date();
-
         try {
             int updateCount = seckillDao.reduceNumber(seckillId, nowTime);
             if (updateCount <= 0) {
