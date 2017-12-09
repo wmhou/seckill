@@ -36,7 +36,7 @@ public class SeckillServiceImpl implements SeckillService {
 
     public List<Seckill> getSeckillList() {
 
-        return seckillDao.queryAll(0, 4);
+        return seckillDao.queryAll(0, 8);
     }
 
     public Seckill getById(long seckillId) {
@@ -70,7 +70,7 @@ public class SeckillServiceImpl implements SeckillService {
     @Transactional
     public SeckillExecution executeSeckill(long seckillId, long userPhonne, String md5)
             throws SeckillException, RepeatKillException, SeckillCloseException {
-        if (md5 == null || md5.equals(getMD5(seckillId))) {
+        if (md5 == null || !md5.equals(getMD5(seckillId))) {
             throw new SeckillException("seckill data rewrite");
         }
         //执行秒杀：减库存 + 记录购买行为
